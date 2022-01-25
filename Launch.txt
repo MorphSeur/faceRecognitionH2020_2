@@ -1,0 +1,27 @@
+In Ubuntu Virtual Machine.
+	Activate environment located in Desktop/environment/faceRecognition
+	Locate /mnt/hgfs/sharedFolder/faceRecognition/iai_skeleton_1.0_4
+	Run $ python server2RealFrame.py
+	    $ python server3Saliency.py
+	    $ python server4Recogn.py
+
+	Run $ python iai_test_client.py --target http://0.0.0.0:5000 start --datalake ./tmp/testiai Chandler.jpg
+	Run $ python iai_test_client.py --target http://0.0.0.0:5001 start --datalake ./tmp/testiai Chandler.jpg
+
+
+
+
+
+Codes
+	server2RealFrame.py - Read Video and browse over the frames a real one and write it in the /tmp/testiai.
+	server3Saliency.py  - Read the frame and select and write in the /tmp/testiai the salient face.
+	server4Recogn.py    - Read the salient face and compare with the database, and write the results.
+
+
+Docker build
+	$ sudo docker build --tag server4recogn .
+
+Docker run
+	$ sudo docker run --publish 5001:5001 --volume="/tmp/testiai/:/tmp/testiai/" -v $(pwd):/app server3saliency sh /app/docker-entrypoint.sh
+	$ sudo docker run --publish 5002:5002 --volume="/mnt/hgfs/sharedFolder/faceRecognition/server2RealFrame2/tmp/testiai/:/mnt/hgfs/sharedFolder/faceRecognition/server2RealFrame2/tmp/testiai/tmp/testiai/" -v $(pwd):/app server4recogn sh /app/docker-entrypoint.sh
+	$ sudo docker run --publish 5000:5000 --volume="/mnt/hgfs/sharedFolder/faceRecognition/24012022/tmp/testiai/:/mnt/hgfs/sharedFolder/faceRecognition/24012022/tmp/testiai/tmp/testiai/" -v $(pwd):/app face_recognition sh /app/docker-entrypoint.sh
